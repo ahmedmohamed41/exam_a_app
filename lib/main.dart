@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeManager.light,
-      initialRoute: AppRoutes.login,
+      initialRoute: AppRoutes.homeScreen,
       onGenerateRoute: (settings) => RoutesManager.router(settings),
     );
   }
