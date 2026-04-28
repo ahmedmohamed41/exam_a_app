@@ -1,7 +1,7 @@
 import 'package:exam_a_app/core/utils/color_manager.dart';
 import 'package:flutter/material.dart';
 
-class ThemeManager {
+abstract class ThemeManager {
   static ThemeData light = ThemeData(
     scaffoldBackgroundColor: ColorManager.whiteColor,
     inputDecorationTheme: InputDecorationTheme(

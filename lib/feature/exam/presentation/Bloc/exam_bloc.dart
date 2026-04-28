@@ -1,0 +1,158 @@
+import 'dart:async';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
+
+import '../../../results/domain/models/exam_result_entity.dart';
+import '../../../../config/base_response/base_response.dart';
+import '../../domain/use_cases/get_exam_questions_use_case.dart';
+import '../../domain/use_cases/store_exam_result_use_case.dart';
+import 'exam_event.dart';
+import 'exam_state.dart';
+
+@injectable
+class ExamBloc extends Bloc<ExamEvent, ExamState> {
+  final GetExamQuestionsUseCase _getExamQuestionsUseCase;
+  final StoreExamResultUseCase _storeExamResultUseCase;
+  Timer? _timer;
+
+  ExamBloc(this._getExamQuestionsUseCase, this._storeExamResultUseCase)
+      : super(ExamState.initial()) {
+    on<GetExamQuestionsEvent>(_onGetExamQuestions);
+    on<NextQuestionEvent>(_onNextQuestion);
+    on<PreviousQuestionEvent>(_onPreviousQuestion);
+    on<UpdateAnswerEvent>(_onUpdateAnswer);
+    on<FinishExamEvent>(_onFinishExam);
+    on<TimerTickedEvent>(_onTimerTicked);
+  }
+
+  Future<void> _onGetExamQuestions(
+    GetExamQuestionsEvent event,
+    Emitter<ExamState> emit,
+  ) async {
+    emit(state.copyWith(status: ExamStatus.loading, errorMessage: null));
+
+    final result = await _getExamQuestionsUseCase(event.examId);
+
+    switch (result) {
+      case SuccessResponse(data: var data):
+        final durationMinutes = data.questions?.first.exam?.duration ?? 0;
+        final totalSeconds = durationMinutes * 60;
+        
+        emit(state.copyWith(
+          status: ExamStatus.success,
+          data: data,
+          currentIndex: 0,
+          remainingSeconds: totalSeconds,
+          totalDurationSeconds: totalSeconds,
+          timerStatus: TimerStatus.running,
+        ));
+        
+        _startTimer(totalSeconds);
+        
+      case ErrorResponse(errorMessage: var message):
+        emit(state.copyWith(
+          status: ExamStatus.error,
+          errorMessage: message,
+        ));
+    }
+  }
+
+  void _startTimer(int seconds) {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      add(TimerTickedEvent(state.remainingSeconds - 1));
+    });
+  }
+
+  void _onTimerTicked(TimerTickedEvent event, Emitter<ExamState> emit) {
+    if (event.duration <= 0) {
+      _timer?.cancel();
+      emit(state.copyWith(
+        remainingSeconds: 0,
+        timerStatus: TimerStatus.finished,
+      ));
+    } else {
+      final status = event.duration < (state.totalDurationSeconds / 2)
+          ? TimerStatus.lowTime
+          : TimerStatus.running;
+          
+      emit(state.copyWith(
+        remainingSeconds: event.duration,
+        timerStatus: status,
+      ));
+    }
+  }
+
+  void _onNextQuestion(NextQuestionEvent event, Emitter<ExamState> emit) {
+    if (state.data?.questions != null &&
+        state.currentIndex < state.data!.questions!.length - 1) {
+      emit(state.copyWith(currentIndex: state.currentIndex + 1));
+    }
+  }
+
+  void _onPreviousQuestion(PreviousQuestionEvent event, Emitter<ExamState> emit) {
+    if (state.currentIndex > 0) {
+      emit(state.copyWith(currentIndex: state.currentIndex - 1));
+    }
+  }
+
+  void _onUpdateAnswer(UpdateAnswerEvent event, Emitter<ExamState> emit) {
+    final newAnswers = Map<int, List<String>>.from(state.answers);
+    newAnswers[state.currentIndex] = event.selectedValues;
+    emit(state.copyWith(answers: newAnswers));
+  }
+
+  Future<void> _onFinishExam(FinishExamEvent event, Emitter<ExamState> emit) async {
+    _timer?.cancel();
+    final questions = state.data?.questions;
+    if (questions == null || questions.isEmpty) return;
+
+    int correctAnswersCount = 0;
+    for (int i = 0; i < questions.length; i++) {
+      final question = questions[i];
+      final userAnswers = state.answers[i] ?? [];
+      if (userAnswers.isNotEmpty && userAnswers.first == question.correct) {
+        correctAnswersCount++;
+      }
+    }
+
+    String? subjectId;
+    String? subjectName;
+    String? subjectIcon;
+    String? examTitle;
+    final firstQuestion = questions.first;
+    
+    examTitle = firstQuestion.exam?.title;
+
+    if (firstQuestion.subject != null && firstQuestion.subject is Map) {
+      final subjectMap = firstQuestion.subject as Map;
+      subjectId = subjectMap['_id']?.toString() ?? subjectMap['id']?.toString();
+      subjectName = subjectMap['name']?.toString();
+      subjectIcon = subjectMap['icon']?.toString();
+    } else if (firstQuestion.exam?.subject != null) {
+      subjectId = firstQuestion.exam!.subject;
+    }
+
+    final resultEntity = ExamResultEntity(
+      uid: DateTime.now().millisecondsSinceEpoch.toString(),
+      score: correctAnswersCount,
+      total: questions.length,
+      date: DateTime.now(),
+      examTitle: examTitle,
+      subjectId: subjectId,
+      subjectName: subjectName,
+      subjectIcon: subjectIcon,
+      questions: questions,
+      userAnswers: Map.from(state.answers),
+    );
+
+    await _storeExamResultUseCase(resultEntity);
+    emit(state.copyWith(score: correctAnswersCount, result: resultEntity));
+  }
+
+  @override
+  Future<void> close() {
+    _timer?.cancel();
+    return super.close();
+  }
+}

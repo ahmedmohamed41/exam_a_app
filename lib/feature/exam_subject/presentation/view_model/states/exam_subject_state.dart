@@ -1,32 +1,31 @@
-import 'package:exam_a_app/config/base_state/base_state.dart';
+import 'package:equatable/equatable.dart';
 import 'package:exam_a_app/feature/exam_subject/domain/models/exam_subject_model.dart';
 
-class ExamSubjectState {
-  final BaseState<List<ExamSubjectModel>> examSubjectState;
-  final bool isLoading1;
-  final List<ExamSubjectModel>? examSubject;
-  final String? errorMessage1;
+enum ExamSubjectStatus { initial, loading, success, error }
 
-  ExamSubjectState({
-    BaseState<List<ExamSubjectModel>>? examSubjectState,
-    this.isLoading1 = false,
-    this.examSubject,
-    this.errorMessage1,
-  }) : examSubjectState =
-           examSubjectState ??
-           BaseState<List<ExamSubjectModel>>(isLoading: false);
+class ExamSubjectState extends Equatable {
+  final ExamSubjectStatus status;
+  final List<ExamSubjectModel>? exams;
+  final String? errorMessage;
+
+  const ExamSubjectState({
+    this.status = ExamSubjectStatus.initial,
+    this.exams,
+    this.errorMessage,
+  });
 
   ExamSubjectState copyWith({
-    BaseState<List<ExamSubjectModel>>? examSubjectStateParam,
-    bool? isLoadingParam,
-    List<ExamSubjectModel>? dataParam,
-    String? errorMessageParam,
+    ExamSubjectStatus? status,
+    List<ExamSubjectModel>? exams,
+    String? errorMessage,
   }) {
     return ExamSubjectState(
-      examSubjectState: examSubjectStateParam ?? examSubjectState,
-      isLoading1: isLoadingParam ?? isLoading1,
-      examSubject: dataParam ?? examSubject,
-      errorMessage1: errorMessageParam ?? errorMessage1,
+      status: status ?? this.status,
+      exams: exams ?? this.exams,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
+
+  @override
+  List<Object?> get props => [status, exams, errorMessage];
 }

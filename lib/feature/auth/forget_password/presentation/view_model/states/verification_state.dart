@@ -1,35 +1,31 @@
-import 'package:exam_a_app/config/base_state/base_state.dart';
+import 'package:equatable/equatable.dart';
 import 'package:exam_a_app/feature/auth/forget_password/data/models/verify_reset_code_dto.dart';
 
-class VerificationState {
-  final BaseState<VerifyResetCodeDto> verifyCodeState;
- 
-  final bool isLoading;
-  final bool isSuccess;
-  final bool hasError;
+enum VerificationStatus { initial, loading, success, error }
+
+class VerificationState extends Equatable {
+  final VerificationStatus status;
+  final VerifyResetCodeDto? result;
   final String? errorMessage;
 
-  VerificationState({
-    BaseState<VerifyResetCodeDto>? verifyCodeState,
-    this.isLoading = false,
-    this.isSuccess = false,
-    this.hasError = false,
+  const VerificationState({
+    this.status = VerificationStatus.initial,
+    this.result,
     this.errorMessage,
-  }) : verifyCodeState = verifyCodeState ?? BaseState<VerifyResetCodeDto>(isLoading: false);
+  });
 
   VerificationState copyWith({
-    BaseState<VerifyResetCodeDto>? verifyCodeStateParam,
-    bool? isLoadingParam,
-    bool? isSuccessParam,
-    bool? hasErrorParam,
-    String? errorMessageParam,
+    VerificationStatus? status,
+    VerifyResetCodeDto? result,
+    String? errorMessage,
   }) {
     return VerificationState(
-      verifyCodeState: verifyCodeStateParam ?? verifyCodeState,
-      isLoading: isLoadingParam ?? isLoading,
-      isSuccess: isSuccessParam ?? isSuccess,
-      hasError: hasErrorParam ?? hasError,
-      errorMessage: errorMessageParam ?? errorMessage,
+      status: status ?? this.status,
+      result: result ?? this.result,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
+
+  @override
+  List<Object?> get props => [status, result, errorMessage];
 }

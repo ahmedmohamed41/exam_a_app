@@ -1,3 +1,5 @@
+import '../../../domain/models/edit_profile_params.dart';
+
 class EditProfileRequest {
   final String username;
   final String firstName;
@@ -12,6 +14,16 @@ class EditProfileRequest {
     required this.email,
     required this.phone,
   });
+
+  factory EditProfileRequest.fromParams(EditProfileParams params) {
+    return EditProfileRequest(
+      username: params.username,
+      firstName: params.firstName,
+      lastName: params.lastName,
+      email: params.email,
+      phone: params.phone,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {

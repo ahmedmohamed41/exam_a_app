@@ -1,27 +1,30 @@
-class ResetPasswordState {
-  final bool isLoading;
-  final bool isSuccess;
+import 'package:equatable/equatable.dart';
+
+enum ResetPasswordStatus { initial, loading, success, error }
+
+class ResetPasswordState extends Equatable {
+  final ResetPasswordStatus status;
   final String? errorMessage;
   final bool isObscure;
 
-  ResetPasswordState({
-    this.isLoading = false,
-    this.isSuccess = false,
+  const ResetPasswordState({
+    this.status = ResetPasswordStatus.initial,
     this.errorMessage,
-    this.isObscure = false,
+    this.isObscure = true,
   });
 
   ResetPasswordState copyWith({
-    bool? isLoading,
-    bool? isSuccess,
+    ResetPasswordStatus? status,
     String? errorMessage,
     bool? isObscure,
   }) {
     return ResetPasswordState(
-      isLoading: isLoading ?? this.isLoading,
-      isSuccess: isSuccess ?? this.isSuccess,
+      status: status ?? this.status,
       errorMessage: errorMessage ?? this.errorMessage,
       isObscure: isObscure ?? this.isObscure,
     );
   }
+
+  @override
+  List<Object?> get props => [status, errorMessage, isObscure];
 }

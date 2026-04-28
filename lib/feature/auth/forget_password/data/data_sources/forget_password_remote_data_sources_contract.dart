@@ -7,7 +7,7 @@ abstract class ForgetPasswordRemoteDataSourcesContract {
   Future<BaseResponse<ForgetPasswordDto>> forgetPassword({String? email});
   Future<BaseResponse<VerifyResetCodeDto>> verifyResetCode({String? resetCode});
   Future<BaseResponse<ResetPasswordDto>> resetPassword({
-    required String email,
-    required String newPassword,
+  required  String email,
+  required  String newPassword,
   });
 }

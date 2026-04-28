@@ -1,71 +1,122 @@
+import 'package:exam_a_app/core/constant/app_text_constants.dart';
+import 'package:exam_a_app/core/utils/color_manager.dart';
+import 'package:exam_a_app/core/utils/router/app_routes.dart';
 import 'package:exam_a_app/feature/auth/register/presentation/viewModel/register_cubit.dart';
 import 'package:exam_a_app/feature/auth/register/presentation/viewModel/register_state.dart';
-import 'package:exam_a_app/feature/auth/register/presentation/widgets/already_have_account.dart';
 import 'package:exam_a_app/feature/auth/register/presentation/widgets/register_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class RegisterBody extends StatefulWidget {
+class RegisterBody extends StatelessWidget {
   const RegisterBody({super.key});
 
   @override
-  State<RegisterBody> createState() => _RegisterBodyState();
-}
-
-class _RegisterBodyState extends State<RegisterBody> {
-  final _formKey = GlobalKey<FormState>();
-  final bool _autoValidate = false;
-
-  void _resetForm(BuildContext context) {
-    final cubit = context.read<RegisterCubit>();
-    cubit.clearControllers();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {});
-    });
-    Future.delayed(const Duration(seconds: 3), () {
-      if (context.mounted) {
-        Navigator.of(context).pop();
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocConsumer<RegisterCubit, RegisterState>(
+    return BlocListener<RegisterCubit, RegisterState>(
+      listenWhen: (prev, curr) => prev.status != curr.status,
       listener: (context, state) {
-        if (state.registerState?.isSuccess == true) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text("Signup Successful!")));
-          _resetForm(context);
-        } else if (state.registerState?.isError == true) {
+        if (state.status == RegisterStatus.success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(AppTextConstants.signupSuccess),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            AppRoutes.explore,
+            (route) => false,
+          );
+        } else if (state.status == RegisterStatus.error) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                state.registerState?.errorMessage ?? "An error occurred",
+                state.errorMessage ?? AppTextConstants.genericError,
               ),
+              backgroundColor: ColorManager.errorColor,
             ),
           );
         }
       },
-      builder: (context, state) {
-        return SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
-            child: Column(
-              children: [
-                RegisterForm(
-                  key: UniqueKey(),
-                  formKey: _formKey,
-                  autoValidate: _autoValidate,
-                ),
-                const SizedBox(height: 10),
-                const AlreadyHaveAccount(),
-              ],
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          children: [
+            _buildHeader(context),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+              child: RegisterForm(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      height: 200,
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [ColorManager.primeColor, Color(0xff1A4BAF)],
+        ),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(40),
+          bottomRight: Radius.circular(40),
+        ),
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            top: -40,
+            right: -40,
+            child: CircleAvatar(radius: 100, backgroundColor: Colors.white.withValues(alpha: 0.05)),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
+                  ),
+                  const SizedBox(height: 10),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Create Account",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          "Join us and start your assessment journey",
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }

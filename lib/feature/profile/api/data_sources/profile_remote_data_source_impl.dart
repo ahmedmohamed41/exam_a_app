@@ -10,30 +10,13 @@ import 'package:injectable/injectable.dart';
 @Injectable(as: ProfileRemoteDataSourceContract)
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSourceContract {
   final ProfileApiClient _profileApiClient;
-  // final LoginLocalDataSource _loginLocalDataSource;
 
-  ProfileRemoteDataSourceImpl(
-    this._profileApiClient,
-    // this._loginLocalDataSource,
-  );
-
-  // Future<String> _getToken() async {
-  //   final token = await _loginLocalDataSource.getToken();
-  //   if (token == null || token.isEmpty) {
-  //     throw DioException(
-  //       requestOptions: RequestOptions(),
-  //       message: 'User token not found',
-  //     );
-  //   }
-  //   return token;
-  // }
+  ProfileRemoteDataSourceImpl(this._profileApiClient);
 
   @override
   Future<BaseResponse<UserDataDto>> getProfile() async {
     try {
-      final token =
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTY0ODcxMDRkYTBkNGNmNTU2YmViNSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzc2ODU5Mzc2fQ.8VGrfWk2MyOpdEpX0zXZy0QiNQcFo9hSZ56zS7QJAOU';
-      final response = await _profileApiClient.getUserProfile(token);
+      final response = await _profileApiClient.getUserProfile();
       return SuccessResponse<UserDataDto>(data: response.user!);
     } catch (e) {
       if (e is DioException) {
@@ -56,9 +39,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSourceContract {
     EditProfileRequest request,
   ) async {
     try {
-      final token =
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZTY0ODcxMDRkYTBkNGNmNTU2YmViNSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzc2ODU5Mzc2fQ.8VGrfWk2MyOpdEpX0zXZy0QiNQcFo9hSZ56zS7QJAOU';
-      final response = await _profileApiClient.editProfile(token, request);
+      final response = await _profileApiClient.editProfile(request);
       return SuccessResponse<UserDataDto>(data: response.user!);
     } catch (e) {
       if (e is DioException) {

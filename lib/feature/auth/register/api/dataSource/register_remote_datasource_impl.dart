@@ -5,12 +5,11 @@ import 'package:exam_a_app/feature/auth/register/data/model/register_response.da
 import 'package:injectable/injectable.dart';
 
 @Injectable(as: RegisterRemoteDatasourceContract)
-class RegisterRemoteDatasourceImpl extends RegisterRemoteDatasourceContract {
+class RegisterRemoteDatasourceImpl implements RegisterRemoteDatasourceContract {
   final RegisterApiService signupApiService;
   RegisterRemoteDatasourceImpl(this.signupApiService);
+
   @override
-  Future<RegisterResponse> register(RegisterRequest request) async {
-    final response = await signupApiService.register(request);
-    return response;
-  }
+  Future<RegisterResponse> register(RegisterRequest request) =>
+      signupApiService.register(request);
 }

@@ -13,6 +13,7 @@ class CustomPinInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasError = state.status == VerificationStatus.error;
     return PinInput(
       pinController: cubit.pinController,
       length: 6,
@@ -27,13 +28,13 @@ class CustomPinInput extends StatelessWidget {
                 decoration: BoxDecoration(
                   border: Border.all(
                     width: 2,
-                    color: state.hasError
+                    color: hasError
                         ? ColorManager.errorColor
                         : ColorManager.whiteBlueColor,
                   ),
                   borderRadius: BorderRadius.circular(10),
 
-                  color: state.hasError
+                  color: hasError
                       ? ColorManager.errorColor.withValues(alpha: 0.05)
                       : ColorManager.whiteBlueColor,
                 ),

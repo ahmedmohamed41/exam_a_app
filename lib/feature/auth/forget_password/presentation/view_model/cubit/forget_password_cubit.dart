@@ -1,4 +1,3 @@
-
 import 'package:exam_a_app/config/base_response/base_response.dart';
 import 'package:exam_a_app/feature/auth/forget_password/domain/models/forget_password_model.dart';
 import 'package:exam_a_app/feature/auth/forget_password/domain/use_case/forget_password_use_case.dart';
@@ -15,32 +14,27 @@ class ForgetPasswordCubit extends Cubit<ForgetPasswordState> {
   final formKey = GlobalKey<FormState>();
 
   ForgetPasswordCubit(this._forgetPasswordUseCase)
-    : super(ForgetPasswordState());
+      : super(const ForgetPasswordState());
+
   Future<void> forgetPassword() async {
     if (!formKey.currentState!.validate()) return;
 
-  
-    emit(
-      state.copyWith(
-        isLoadingParam: true,
-        errorMessageParam: null,
-        dataParam: null,
-      ),
-    );
+    emit(state.copyWith(status: ForgetPasswordStatus.loading, errorMessage: null));
 
     final response = await _forgetPasswordUseCase(email: emailController.text);
 
     switch (response) {
       case SuccessResponse<ForgetPasswordModel>():
-        emit(state.copyWith(isLoadingParam: false, dataParam: response.data));
+        emit(state.copyWith(
+          status: ForgetPasswordStatus.success,
+          result: response.data,
+        ));
         break;
       case ErrorResponse<ForgetPasswordModel>():
-        emit(
-          state.copyWith(
-            isLoadingParam: false,
-            errorMessageParam: response.errorMessage,
-          ),
-        );
+        emit(state.copyWith(
+          status: ForgetPasswordStatus.error,
+          errorMessage: response.errorMessage,
+        ));
         break;
     }
   }

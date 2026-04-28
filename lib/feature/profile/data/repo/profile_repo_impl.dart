@@ -5,6 +5,7 @@ import 'package:exam_a_app/feature/profile/data/models/user_data_dto.dart';
 import 'package:exam_a_app/feature/profile/domain/models/user_data_model.dart';
 import 'package:exam_a_app/feature/profile/domain/repo/profile_repo_contract.dart';
 import 'package:injectable/injectable.dart';
+import '../../domain/models/edit_profile_params.dart';
 
 @Injectable(as: ProfileRepoContract)
 class ProfileRepoImpl implements ProfileRepoContract {
@@ -25,8 +26,13 @@ class ProfileRepoImpl implements ProfileRepoContract {
   }
 
   @override
-  Future<BaseResponse<UserDataModel>> editProfile(EditProfileRequest request) async {
-    final response = await _profileRemoteDataSourceContract.editProfile(request);
+  Future<BaseResponse<UserDataModel>> editProfile(
+    EditProfileParams params,
+  ) async {
+    final request = EditProfileRequest.fromParams(params);
+    final response = await _profileRemoteDataSourceContract.editProfile(
+      request,
+    );
     switch (response) {
       case SuccessResponse<UserDataDto>():
         return SuccessResponse<UserDataModel>(data: response.data.toDomain());

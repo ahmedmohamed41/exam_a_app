@@ -1,52 +1,67 @@
-import 'package:exam_a_app/config/base_state/base_state.dart';
+import 'package:equatable/equatable.dart';
 import 'package:exam_a_app/feature/profile/domain/models/user_data_model.dart';
 
-const _sentinel = Object();
+enum ProfileStatus { initial, loading, success, error }
 
-class ProfileState {
-  final BaseState<UserDataModel> profileState;
-  final bool isLoading1;
+class ProfileState extends Equatable {
+  final ProfileStatus status;
+  final UserDataModel? user;
+  final String? errorMessage;
+
   final bool isUpdating;
-  final UserDataModel? profile;
-  final String? errorMessage1;
   final String? updateErrorMessage;
   final bool updateSuccess;
 
-  ProfileState({
-    BaseState<UserDataModel>? profileState,
-    this.isLoading1 = false,
+  final bool hasChanges;
+  final bool isLoggingOut;
+  final bool logoutSuccess;
+
+  const ProfileState({
+    this.status = ProfileStatus.initial,
+    this.user,
+    this.errorMessage,
     this.isUpdating = false,
-    this.profile,
-    this.errorMessage1,
     this.updateErrorMessage,
     this.updateSuccess = false,
-  }) : profileState =
-           profileState ??
-           BaseState<UserDataModel>(isLoading: false);
+    this.hasChanges = false,
+    this.isLoggingOut = false,
+    this.logoutSuccess = false,
+  });
 
   ProfileState copyWith({
-    BaseState<UserDataModel>? profileStateParam,
-    bool? isLoadingParam,
-    bool? isUpdatingParam,
-    Object? dataParam = _sentinel,
-    Object? errorMessageParam = _sentinel,
-    Object? updateErrorMessageParam = _sentinel,
-    bool? updateSuccessParam,
+    ProfileStatus? status,
+    UserDataModel? user,
+    String? errorMessage,
+    bool? isUpdating,
+    String? updateErrorMessage,
+    bool? updateSuccess,
+    bool? hasChanges,
+    bool? isLoggingOut,
+    bool? logoutSuccess,
   }) {
     return ProfileState(
-      profileState: profileStateParam ?? profileState,
-      isLoading1: isLoadingParam ?? isLoading1,
-      isUpdating: isUpdatingParam ?? isUpdating,
-      profile: identical(dataParam, _sentinel)
-          ? profile
-          : dataParam as UserDataModel?,
-      errorMessage1: identical(errorMessageParam, _sentinel)
-          ? errorMessage1
-          : errorMessageParam as String?,
-      updateErrorMessage: identical(updateErrorMessageParam, _sentinel)
-          ? updateErrorMessage
-          : updateErrorMessageParam as String?,
-      updateSuccess: updateSuccessParam ?? updateSuccess,
+      status: status ?? this.status,
+      user: user ?? this.user,
+      errorMessage: errorMessage ?? this.errorMessage,
+      isUpdating: isUpdating ?? this.isUpdating,
+      updateErrorMessage: updateErrorMessage ?? this.updateErrorMessage,
+      updateSuccess: updateSuccess ?? this.updateSuccess,
+      hasChanges: hasChanges ?? this.hasChanges,
+      isLoggingOut: isLoggingOut ?? this.isLoggingOut,
+      logoutSuccess: logoutSuccess ?? this.logoutSuccess,
     );
   }
+
+  @override
+  List<Object?> get props => [
+    status,
+    user,
+    errorMessage,
+    isUpdating,
+    updateErrorMessage,
+    updateSuccess,
+    hasChanges,
+    isLoggingOut,
+    logoutSuccess,
+  ];
 }

@@ -6,8 +6,12 @@ class AppRoutes {
   static const String forgetPasswordScreen = '/forgetPasswordScreen';
   static const String verificationCodeScreen = '/verificationCodeScreen';
   static const String resetPasswordScreen = '/resetPasswordScreen';
+  static const String exam = '/exam';
+  static const String score = '/score';
+  static const String explore = '/explore';
   static const String subjectExamScreen = '/subjectExamScreen';
   static const String subjectExamDetailsScreen = '/subjectExamDetailsScreen';
-  static const String homeScreen = '/homeScreen';
   static const String profile = '/profile';
+  static const String changePassword = '/changePassword';
+  static const String results = '/results';
 }

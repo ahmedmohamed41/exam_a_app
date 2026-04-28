@@ -12,38 +12,37 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   final formKey = GlobalKey<FormState>();
-  bool obscureText = false;
+  
+  ResetPasswordCubit(this._useCase) : super(const ResetPasswordState());
+
   void changeObscureText() {
     emit(state.copyWith(isObscure: !state.isObscure));
   }
 
-  ResetPasswordCubit(this._useCase) : super(ResetPasswordState());
-
   Future<void> resetPassword(String email, String newPassword) async {
     if (!formKey.currentState!.validate()) return;
+    
     if (passwordController.text != confirmPasswordController.text) {
-      emit(
-        state.copyWith(
-          isLoading: false,
-          errorMessage: "Passwords do not match",
-          isSuccess: false,
-        ),
-      );
+      emit(state.copyWith(
+        status: ResetPasswordStatus.error,
+        errorMessage: "Passwords do not match",
+      ));
       return;
     }
 
-    emit(state.copyWith(isLoading: true, errorMessage: null));
+    emit(state.copyWith(status: ResetPasswordStatus.loading, errorMessage: null));
 
     final response = await _useCase(email: email, newPassword: newPassword);
 
     switch (response) {
       case SuccessResponse<ResetPasswordModel>():
-        emit(state.copyWith(isLoading: false, isSuccess: true));
+        emit(state.copyWith(status: ResetPasswordStatus.success));
         break;
       case ErrorResponse<ResetPasswordModel>():
-        emit(
-          state.copyWith(isLoading: false, errorMessage: response.errorMessage),
-        );
+        emit(state.copyWith(
+          status: ResetPasswordStatus.error,
+          errorMessage: response.errorMessage,
+        ));
         break;
     }
   }

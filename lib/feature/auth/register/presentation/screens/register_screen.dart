@@ -11,7 +11,10 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => getIt.get<RegisterCubit>(),
-      child: Scaffold(backgroundColor: Colors.white, body: RegisterBody()),
+      child: const Scaffold(
+        backgroundColor: Color(0xffF8F9FB),
+        body: RegisterBody(),
+      ),
     );
   }
 }

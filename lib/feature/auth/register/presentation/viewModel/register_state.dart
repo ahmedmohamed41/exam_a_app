@@ -1,20 +1,31 @@
-import 'package:exam_a_app/config/base_state/base_state.dart';
-import 'package:exam_a_app/feature/auth/register/domain/model/user_model.dart';
+import 'package:equatable/equatable.dart';
+import 'package:exam_a_app/feature/auth/register/domain/model/register_details.dart';
 
-class RegisterState {
-  BaseState<RegisterModel>? registerState;
+enum RegisterStatus { initial, loading, success, error }
 
-  bool isFormFilled;
+class RegisterState extends Equatable {
+  final RegisterStatus status;
+  final RegisterDetails? result;
+  final String? errorMessage;
 
-  RegisterState({this.registerState, this.isFormFilled = false});
+  const RegisterState({
+    this.status = RegisterStatus.initial,
+    this.result,
+    this.errorMessage,
+  });
 
   RegisterState copyWith({
-    BaseState<RegisterModel>? registerState,
-    bool? isFormFilled,
+    RegisterStatus? status,
+    RegisterDetails? result,
+    String? errorMessage,
   }) {
     return RegisterState(
-      registerState: registerState ?? this.registerState,
-      isFormFilled: isFormFilled ?? this.isFormFilled,
+      status: status ?? this.status,
+      result: result ?? this.result,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
+
+  @override
+  List<Object?> get props => [status, result, errorMessage];
 }

@@ -1,5 +1,5 @@
-
 import 'package:exam_a_app/core/utils/color_manager.dart';
+
 import 'package:flutter/material.dart';
 
 class CustomButton extends StatelessWidget {
@@ -27,7 +27,7 @@ class CustomButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: isEnabled
               ? ColorManager.primeColor
-              : ColorManager.greyColor,
+              : ColorManager.disabledColor,
 
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),

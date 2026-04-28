@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import '../../domain/model/register_params.dart';
 
 part 'register_request.g.dart';
 
@@ -35,5 +36,17 @@ class RegisterRequest {
 
   Map<String, dynamic> toJson() {
     return _$RegisterRequestToJson(this);
+  }
+
+  factory RegisterRequest.fromParams(RegisterParams params) {
+    return RegisterRequest(
+      username: params.username,
+      firstName: params.firstName,
+      lastName: params.lastName,
+      email: params.email,
+      password: params.password,
+      rePassword: params.rePassword,
+      phone: params.phone,
+    );
   }
 }

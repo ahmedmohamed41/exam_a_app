@@ -1,13 +1,33 @@
-abstract class LoginState {}
+import 'package:equatable/equatable.dart';
+import '../../domain/entities/user_entity.dart';
 
-class LoginInitial extends LoginState {}
+enum LoginStatus { initial, loading, success, error }
 
-class LoginLoading extends LoginState {}
+class LoginState extends Equatable {
+  final LoginStatus status;
+  final (User, String)? result;
+  final String? errorMessage;
 
-class LoginSuccess extends LoginState {}
+  const LoginState({
+    this.status = LoginStatus.initial,
+    this.result,
+    this.errorMessage,
+  });
 
-class LoginFailure extends LoginState {
-  final String message;
+  factory LoginState.initial() => const LoginState();
 
-  LoginFailure(this.message);
+  LoginState copyWith({
+    LoginStatus? status,
+    (User, String)? result,
+    String? errorMessage,
+  }) {
+    return LoginState(
+      status: status ?? this.status,
+      result: result ?? this.result,
+      errorMessage: errorMessage ?? this.errorMessage,
+    );
+  }
+
+  @override
+  List<Object?> get props => [status, result, errorMessage];
 }

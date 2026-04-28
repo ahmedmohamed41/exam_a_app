@@ -14,11 +14,8 @@ abstract class ProfileApiClient {
   factory ProfileApiClient(Dio dio) = _ProfileApiClient;
 
   @GET(EndPoint.getUser)
-  Future<ProfileResponse> getUserProfile(@Header('token') String token);
+  Future<ProfileResponse> getUserProfile();
 
   @PUT(EndPoint.editProfile)
-  Future<ProfileResponse> editProfile(
-    @Header('token') String token,
-    @Body() EditProfileRequest request,
-  );
+  Future<ProfileResponse> editProfile(@Body() EditProfileRequest request);
 }
