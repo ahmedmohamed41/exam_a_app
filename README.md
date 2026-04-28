@@ -15,6 +15,7 @@
 **Exam App** is a Flutter application built with a clean, feature-first architecture. It lets users sign in, browse exam subjects, view exam details, take timed tests, review their scores, and manage their profile and password from one place.
 
 The app uses:
+
 - **Flutter / Dart** for the UI
 - **Bloc / Cubit** for state management
 - **GetIt + Injectable** for dependency injection
@@ -51,9 +52,8 @@ The app uses:
 <p align="center">
   <img src="screenshots/Screenshot_20260426_212637.png" width="30%" />
   <img src="screenshots/Screenshot_20260426_212645.png" width="30%" />
-  <img src="WhatsApp Image 2026-04-28 at 5.17.33 PM.jpeg" width="30%" />
+  <img src="screenshots/WhatsApp Image 2026-04-28 at 5.17.33 PM.jpeg" width="30%" />
 </p>
-
 
 ---
 
