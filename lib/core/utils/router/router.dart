@@ -8,6 +8,7 @@ import 'package:exam_a_app/feature/exam_subject/presentation/screens/subject_exa
 import 'package:exam_a_app/feature/exam_subject/presentation/screens/subject_exam_screen.dart';
 import 'package:exam_a_app/feature/exam_subject/presentation/view_model/cubit/exam_subject_cubit.dart';
 import 'package:exam_a_app/feature/home/home_screen.dart';
+import 'package:exam_a_app/feature/profile/presentation/screens/profile_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../config/di/di.dart';
@@ -91,12 +92,15 @@ class RoutesManager {
       case AppRoutes.register:
         return CupertinoPageRoute(builder: (context) => const RegisterScreen());
       case AppRoutes.subjectExamScreen:
-        return CupertinoPageRoute(
-          builder: (context) => BlocProvider(
-            create: (_) => getIt<ExamSubjectCubit>(),
-            child: SubjectExamScreen(subjectId: '670037f6728c92b7fdf434fc'),
-          ),
-        );
+        {
+          return CupertinoPageRoute(
+            builder: (context) => BlocProvider(
+              create: (_) => getIt<ExamSubjectCubit>(),
+              child: SubjectExamScreen(subjectId: '670037f6728c92b7fdf434fc'),
+            ),
+          );
+        }
+
       case AppRoutes.subjectExamDetailsScreen:
         {
           final modal = settings.arguments as ExamSubjectModel;
@@ -107,6 +111,8 @@ class RoutesManager {
 
       case AppRoutes.homeScreen:
         return CupertinoPageRoute(builder: (context) => const HomeScreen());
+      case AppRoutes.profile:
+        return CupertinoPageRoute(builder: (context) => const ProfileScreen());
 
       default:
         return null;

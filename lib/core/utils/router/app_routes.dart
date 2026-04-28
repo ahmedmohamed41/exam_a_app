@@ -9,4 +9,5 @@ class AppRoutes {
   static const String subjectExamScreen = '/subjectExamScreen';
   static const String subjectExamDetailsScreen = '/subjectExamDetailsScreen';
   static const String homeScreen = '/homeScreen';
+  static const String profile = '/profile';
 }
